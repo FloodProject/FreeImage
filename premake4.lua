@@ -1,127 +1,70 @@
 
-group "FreeImage"
+group "FreeImageProjs"
 
-project "freeimagelib"
-    kind "StaticLib"
+project "FreeImage"
+
+    SetupNativeDependencyProject()
+
+    kind "SharedLib"
     language "C++"
-       
+
+    removeflags { "Unicode" }
+
     includedirs
     {
-                "source",
-                "source/zlib",
-                "source/deprecationmanager",
-                "source/openexr/half",
-                "source/openexr/iex",
-                "source/openexr/ilmimf",
-                "source/openexr/imath",
-                "source/openexr/ilmthread",
+        "source",
+        "source/zlib",
+        "source/deprecationmanager",
+        "source/openexr/half",
+        "source/openexr/iex",
+        "source/openexr/ilmimf",
+        "source/openexr/imath",
+        "source/openexr/ilmthread",
     }
         
     files 
     { 
-                "source/*.h",
-                "source/deprecationmanager/*.h",
-                "source/deprecationmanager/*.cpp",
-                "source/freeimage/*.cpp",
-                "source/metadata/*.cpp",
-                "source/freeimagetoolkit/*.h",
-                "source/freeimagetoolkit/*.cpp",        
+        "source/*.h",
+        "source/deprecationmanager/*.h",
+        "source/deprecationmanager/*.cpp",
+        "source/freeimage/*.cpp",
+        "source/metadata/*.cpp",
+        "source/freeimagetoolkit/*.h",
+        "source/freeimagetoolkit/*.cpp",
     }
-    
-    excludes
-    {
-      
-    }
-    
+
     defines 
     { 
-      "WIN32",
-      "WIN32_LEAN_AND_MEAN",
-      "VC_EXTRALEAN",
       "_LIB",
       "OPJ_STATIC",
-          "LIBRAW_NODLL",
-      "FREEIMAGE_LIB",
-      "_CRT_SECURE_NO_DEPRECATE"
+      "LIBRAW_NODLL",
+      "FREEIMAGE_EXPORTS"
     }
     
-    configuration "debug"
-        defines { "DEBUG" }
-        flags { "Symbols" }       
-        targetname "freeimage"
-           
-    configuration "release"
-        defines { "NDEBUG" }
-        flags { "Optimize" }              
-        targetname "freeimage"
-
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
-
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )
-
------------------------------------------------------------------------------------------------------------------------------------------------------
-
-project "zlib"
-    kind "StaticLib"
-    language "C++"
-    
-    includedirs
+    links
     {
-        "source/zlib"
+        "openexr",
+        "libtiff4",
+        "libpng",
+        "libopenjpeg",
+        "libmng",
+        "libjpeg",
+        "libraw",
+        "zlib"
     }
-        
-    files 
-    { 
-        "source/zlib/*.h",
-        "source/zlib/*.c",
-    }
-    
-    excludes
-    {
-        "source/zlib/example.c",
-        "source/zlib/minigzip.c",
-    }
-    
-    defines 
-    { 
-      "WIN32",
-      "_LIB",
-      "_CRT_SECURE_NO_DEPRECATE"
-    }
-    
-    configuration ( "debug" )
-        defines { "_DEBUG" }
-        flags { "Symbols" }
-        targetname "zlib"
-      
-    configuration ( "release" )
-        defines { "NDEBUG" }
-        flags { "Optimize" }
-        targetname "zlib"
-      
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
 
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )         
-      
+    configuration "windows"
+        defines { "WIN32", "WIN32_LEAN_AND_MEAN" }
+
+    configuration "vs*"
+        defines { "VC_EXTRALEAN", "_CRT_SECURE_NO_DEPRECATE" }
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 project "openexr"
+
+    SetupNativeDependencyProject()
+
     kind "StaticLib"
     language "C++"
     
@@ -233,38 +176,21 @@ project "openexr"
     
     defines 
     { 
-        "WIN32",
-        "WIN32_LEAN_AND_MEAN",
-        "VC_EXTRALEAN",
         "_LIB",
-        "_CRT_SECURE_NO_DEPRECATE"
     }
     
-    configuration ( "debug" )
-        defines { "DEBUG" }
-        flags { "Symbols" }
-        targetname "openexr"
-      
-    configuration ( "release" )
-        defines { "NDEBUG" }
-        flags { "Optimize" }
-        targetname "openexr"
+    configuration "windows"
+        defines { "WIN32", "WIN32_LEAN_AND_MEAN" }
 
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
+    configuration "vs*"
+        defines { "VC_EXTRALEAN", "_CRT_SECURE_NO_DEPRECATE" }
 
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )         
-      
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 project "libtiff4"
+
+    SetupNativeDependencyProject()
+
     kind "StaticLib"
     language "C++"
     
@@ -296,35 +222,18 @@ project "libtiff4"
     
     defines 
     { 
-        "WIN32",
         "_LIB",
     }
     
-    configuration "debug"
-        defines { "DEBUG" }
-        flags { "Symbols" }
-        targetname "libtiff"
-      
-    configuration "release"
-        defines { "NDEBUG" }
-        flags { "Optimize" }
-        targetname "libtiff"
+    configuration "windows"
+        defines { "WIN32" }
 
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
-
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )
-                
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 project "libpng"
+
+    SetupNativeDependencyProject()
+
     kind "StaticLib"
     language "C++"
     
@@ -346,38 +255,21 @@ project "libpng"
     
     defines 
     { 
-        "WIN32",
-        "WIN32_LEAN_AND_MEAN",
-        "VC_EXTRALEAN",
         "_LIB",
-        "_CRT_SECURE_NO_DEPRECATE"
     }
-    
-    configuration ( "debug" )
-        defines { "DEBUG" }
-        flags { "Symbols" }
-        targetname "libpng"
-      
-    configuration ( "release" )
-        defines { "NDEBUG" }
-        flags { "Optimize" }
-        targetname "libpng"
 
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
+    configuration "windows"
+        defines { "WIN32", "WIN32_LEAN_AND_MEAN" }
 
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )         
+    configuration "vs*"
+        defines { "VC_EXTRALEAN", "_CRT_SECURE_NO_DEPRECATE" }
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------        
 
 project "libopenjpeg"
+
+    SetupNativeDependencyProject()
+
     kind "StaticLib"
     language "C++"
     
@@ -399,39 +291,22 @@ project "libopenjpeg"
     
     defines 
     { 
-        "WIN32",
-        "WIN32_LEAN_AND_MEAN",
-        "VC_EXTRALEAN",
         "_LIB",
         "OPJ_STATIC",
-        "_CRT_SECURE_NO_DEPRECATE"
     }
-    
-    configuration ( "debug" )
-        defines { "DEBUG" }
-        flags { "Symbols" }
-        targetname "libopenjpeg"
 
-    configuration ( "release" )
-        defines { "NDEBUG" }
-        flags { "Optimize" }
-        targetname "libopenjpeg"
+    configuration "windows"
+        defines { "WIN32", "WIN32_LEAN_AND_MEAN" }
 
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
-
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )         
+    configuration "vs*"
+        defines { "VC_EXTRALEAN", "_CRT_SECURE_NO_DEPRECATE" }
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------        
 
 project "libmng"
+
+    SetupNativeDependencyProject()
+
     kind "StaticLib"
     language "C++"
     
@@ -454,39 +329,22 @@ project "libmng"
     
     defines 
     { 
-        "WIN32",
-        "WIN32_LEAN_AND_MEAN",
-        "VC_EXTRALEAN",
         "_LIB",
         "MNG_BUILD_SO",
-        "_CRT_SECURE_NO_DEPRECATE"
     }
     
-    configuration ( "debug" )
-        defines { "DEBUG" }
-        flags { "Symbols" }
-        targetname "libmng"
-      
-    configuration ( "release" )
-        defines { "NDEBUG" }
-        flags { "Optimize" }
-        targetname "libmng"
+    configuration "windows"
+        defines { "WIN32", "WIN32_LEAN_AND_MEAN" }
 
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
-
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )         
+    configuration "vs*"
+        defines { "VC_EXTRALEAN", "_CRT_SECURE_NO_DEPRECATE" }
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------        
 
 project "libjpeg"
+
+    SetupNativeDependencyProject()
+
     kind "StaticLib"
     language "C++"
     
@@ -520,38 +378,21 @@ project "libjpeg"
     
     defines 
     { 
-        "WIN32",
-        "WIN32_LEAN_AND_MEAN",
-        "VC_EXTRALEAN",
         "_LIB",
-        "_CRT_SECURE_NO_DEPRECATE"
     }
-    
-    configuration ( "debug" )
-        defines { "DEBUG" }
-        flags { "Symbols" }
-        targetname "libjpeg"
-      
-    configuration ( "release" )
-        defines { "NDEBUG" }
-        flags { "Optimize" }
-        targetname "libjpeg"
 
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
+    configuration "windows"
+        defines { "WIN32", "WIN32_LEAN_AND_MEAN" }
 
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )         
-      
+    configuration "vs*"
+        defines { "VC_EXTRALEAN", "_CRT_SECURE_NO_DEPRECATE" }
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 project "libraw"
+
+    SetupNativeDependencyProject()
+
     kind "StaticLib"
     language "C++"
     
@@ -572,33 +413,15 @@ project "libraw"
     }
     
     defines 
-    { 
-        "WIN32",
+    {
         "_LIB",
-        "_CRT_SECURE_NO_DEPRECATE",
         "LIBRAW_NODLL"
     }
-    
-    configuration ( "debug" )
-        defines { "_DEBUG" }
-        flags { "Symbols" }
-        targetname "libraw"
-      
-    configuration ( "release" )
-        defines { "NDEBUG" }
-        flags { "Optimize" }
-        targetname "libraw"
-      
-    configuration { "debug", "x32" }
-        targetdir ( "lib/x32/debug" )
 
-    configuration { "debug", "x64" }
-        targetdir ( "lib/x64/debug" )
-        
-    configuration { "release", "x32" }
-        targetdir ( "lib/x32/release" )
-    
-    configuration { "release", "x64"}
-        targetdir ( "lib/x64/release" )
+    configuration "windows"
+        defines { "WIN32" }
+
+    configuration "vs*"
+        defines { "_CRT_SECURE_NO_DEPRECATE" }
 
 group ""
