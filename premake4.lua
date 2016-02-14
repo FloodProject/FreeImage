@@ -7,16 +7,20 @@ project "FreeImage"
 
     kind "SharedLib"
     language "C++"
-
-    removeflags { "Unicode" }
-
+    removeflags { "Unicode", "NoExceptions" }
+    removedefines { "UNICODE" }
+    
     includedirs
     {
         "source",
         "source/zlib",
         "source/deprecationmanager",
+        "source/LibJXR/jxrgluelib",
+        "source/LibJXR/image/sys",
+        "source/openexr/",
         "source/openexr/half",
         "source/openexr/iex",
+        "source/openexr/iexmath",
         "source/openexr/ilmimf",
         "source/openexr/imath",
         "source/openexr/ilmthread",
@@ -55,9 +59,13 @@ project "FreeImage"
 
     configuration "windows"
         defines { "WIN32", "WIN32_LEAN_AND_MEAN" }
+        links { "Ws2_32" }
 
     configuration "vs*"
         defines { "VC_EXTRALEAN", "_CRT_SECURE_NO_DEPRECATE" }
+
+    configuration "not vs*"
+        buildoptions { "-Wno-deprecated-declarations", "-Wwrite-strings"  }        
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -67,6 +75,7 @@ project "openexr"
 
     kind "StaticLib"
     language "C++"
+    removeflags { "NoExceptions", "NoRTTI" }
     
     includedirs
     {
@@ -74,6 +83,7 @@ project "openexr"
         "source/openexr/ilmimf",
         "source/openexr/imath",
         "source/openexr/iex",
+        "source/openexr/iexmath",
         "source/openexr/half",
         "source/openexr/ilmthread",
         "source/zlib",
@@ -185,6 +195,9 @@ project "openexr"
     configuration "vs*"
         defines { "VC_EXTRALEAN", "_CRT_SECURE_NO_DEPRECATE" }
 
+    configuration "not vs*"
+        buildoptions { "-fpermissive" }        
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 project "libtiff4"
@@ -286,7 +299,12 @@ project "libopenjpeg"
     
     excludes
     {
-        "source/t1_generate_luts.c"
+        "source/libopenjpeg/t1_generate_luts.c",
+        "source/libopenjpeg/cidx_manager.*",
+        "source/libopenjpeg/phix_manager.*",
+        "source/libopenjpeg/ppix_manager.*",
+        "source/libopenjpeg/thix_manager.*",
+        "source/libopenjpeg/tpix_manager.*"
     }
     
     defines 
@@ -395,7 +413,8 @@ project "libraw"
 
     kind "StaticLib"
     language "C++"
-    
+    removeflags { "NoExceptions" }
+
     includedirs
     {
         "source/librawlite"
@@ -410,6 +429,9 @@ project "libraw"
     
     excludes
     {
+        "**wf_filtering.cpp",
+        "**dht_demosaic.cpp",
+        "**aahd_demosaic.cpp"
     }
     
     defines 
@@ -423,5 +445,11 @@ project "libraw"
 
     configuration "vs*"
         defines { "_CRT_SECURE_NO_DEPRECATE" }
+
+    configuration "windows"
+        links { "Ws2_32" }
+
+    configuration "not vs*"
+        buildoptions { "-Wno-literal-suffix", "-Wno-deprecated-declarations", "-Wno-narrowing"  }        
 
 group ""
